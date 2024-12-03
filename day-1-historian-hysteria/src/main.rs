@@ -1,10 +1,9 @@
+use aoc_2024::read_input;
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{self, BufRead};
 
 fn main() {
     // TODO: optimize solution
-    if let Ok(lines) = read_input() {
+    if let Ok(lines) = read_input("input") {
         let lists = lines.map(|line_result| {
             let line = line_result.unwrap();
             let mut list_elements = line.split_whitespace();
@@ -52,9 +51,4 @@ fn part_one(left_list: &mut Vec<usize>, right_list: &mut Vec<usize>) {
     };
     let zipped = left_list.iter().zip(right_list.iter());
     println!("Part One Result: {}", zipped.fold(0, accum));
-}
-
-fn read_input() -> io::Result<io::Lines<io::BufReader<File>>> {
-    let file = File::open("input")?;
-    Ok(io::BufReader::new(file).lines())
 }

@@ -1,9 +1,9 @@
-use aoc_2024::read_input;
+use aoc_2024::read_input_by_line;
 use std::collections::HashMap;
 
 fn main() {
     // TODO: optimize solution
-    if let Ok(lines) = read_input("input") {
+    if let Ok(lines) = read_input_by_line("input") {
         let lists = lines.map(|line_result| {
             let line = line_result.unwrap();
             let mut list_elements = line.split_whitespace();

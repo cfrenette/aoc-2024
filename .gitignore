@@ -2,3 +2,5 @@
 **/debug/
 **/Cargo.lock
 **/*.rs.bk
+
+**/input

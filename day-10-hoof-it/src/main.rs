@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use aoc_2024::read_input_by_line;
 
@@ -12,52 +12,62 @@ fn main() {
                     .collect()
             })
             .collect();
-        part_one(&map);
+        calculate_scores(&map);
     }
 }
 
-fn part_one(map: &Vec<Vec<u32>>) {
-    let mut sum = 0;
+fn calculate_scores(map: &Vec<Vec<u32>>) {
+    let (mut part_one, mut part_two) = (0, 0);
     for row in 0..map.len() {
-        for col in 0..map.len() {
+        for col in 0..map[0].len() {
             if map[row][col] == 9 {
                 // search for trailheads reachable from the top
                 // keeping track of which were reachable
-                let mut visited = HashSet::new();
+                let mut visited = HashMap::new();
                 search(map, row, col, &mut visited);
-                sum += visited.len();
+                part_one += visited.len();
+                part_two += visited.into_values().sum::<usize>();
             }
         }
     }
-    println!("Sum of trailhead scores: {}", sum);
+    println!("Sum of trailhead scores: {}", part_one);
+    println!("Sum of trailhead ratings: {}", part_two);
 }
 
-fn search(map: &Vec<Vec<u32>>, row: usize, col: usize, visited: &mut HashSet<(usize, usize)>) {
+fn search(
+    map: &Vec<Vec<u32>>,
+    row: usize,
+    col: usize,
+    ratings: &mut HashMap<(usize, usize), usize>,
+) {
     let height = map[row][col];
 
-    // if we've reached a new trailhead, add it to the list
-    if height == 0 && !visited.contains(&(row, col)) {
-        // mark the trailhead as visited so we don't double count it
-        visited.insert((row, col));
+    // if we've reached a trailhead
+    if height == 0 {
+        // add it or increment its rating by one
+        ratings
+            .entry((row, col))
+            .and_modify(|e| *e += 1)
+            .or_insert(1);
     } else if height != 0 {
         // search up
         if row > 0 && map[row - 1][col] == height - 1 {
-            search(map, row - 1, col, visited);
+            search(map, row - 1, col, ratings);
         }
 
         // search left
         if col > 0 && map[row][col - 1] == height - 1 {
-            search(map, row, col - 1, visited);
+            search(map, row, col - 1, ratings);
         }
 
         // search right
         if col < map[0].len() - 1 && map[row][col + 1] == height - 1 {
-            search(map, row, col + 1, visited);
+            search(map, row, col + 1, ratings);
         }
 
         // search down
         if row < map.len() - 1 && map[row + 1][col] == height - 1 {
-            search(map, row + 1, col, visited);
+            search(map, row + 1, col, ratings);
         }
     }
 }
